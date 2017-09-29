@@ -12,7 +12,7 @@ After cloning
 * cd src
 * dotnet fable yarn-start
 
-The original index.html (index1.html) and App.fs (App1.fs) files are replaced with a React sample from the ReactSampl folder.
+The original `index.html` (index1.html) and `App.fs` (App1.fs) files are replaced with a React sample from the ReactSample folder.
 
 Based on the famous:
 
