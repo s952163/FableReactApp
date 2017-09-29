@@ -1,19 +1,82 @@
-module FableReactApp
+module App
+
+(**
+ - title: Counter
+ - tagline: The famous Increment/Decrement ported from Elm
+*)
 
 open Fable.Core
-open Fable.Core.JsInterop
 open Fable.Import
+open Elmish
+open System
 
-let init() =
-    let canvas = Browser.document.getElementsByTagName_canvas().[0]
-    canvas.width <- 1000.
-    canvas.height <- 800.
-    let ctx = canvas.getContext_2d()
-    // The (!^) operator checks and casts a value to an Erased Union type
-    // See http://fable.io/docs/interacting.html#Erase-attribute
-    ctx.fillStyle <- !^"rgb(200,0,0)"
-    ctx.fillRect (10., 10., 55., 50.)
-    ctx.fillStyle <- !^"rgba(0, 0, 200, 0.5)"
-    ctx.fillRect (30., 30., 55., 50.)
+open Fable.Core.JsInterop
+open Fable.Helpers.React.Props
 
-init()
+open Elmish.React
+
+//module R = Fable.Helpers.React
+open Fable.Helpers.React
+
+// MODEL
+type Photo = {
+    url: string
+    }
+
+type Album = {
+    photos : Photo list
+    selectedUrl : string
+    }
+
+type Model = Album
+    
+type Msg = | SelectedUrl of string
+
+let photoAlbum = [
+         {url="1.jpeg"}
+         {url= "2.jpeg"}
+         {url = "3.jpeg"}
+         ]
+
+let album = {
+    photos = photoAlbum
+    selectedUrl = "1.jpeg"
+    }
+
+let urlPrefix = "http://elm-in-action.com/"
+
+let init() : Model = album
+
+
+// UPDATE
+let update (msg:Msg) (model:Model) =
+  match msg with 
+  | (SelectedUrl x) -> {model with selectedUrl = x}    
+  //| _ -> model
+
+// VIEW (rendered with React)
+let view model dispatch =
+ 
+  let viewThumbnail selectedUrl thumbnail = 
+        
+        img [ Src (urlPrefix + thumbnail.url)
+              classList  ["selected", selectedUrl = thumbnail.url] 
+              OnClick (fun _ -> dispatch (SelectedUrl thumbnail.url))
+        ]
+
+  div [] [
+        br [] 
+        h1 [ClassName "content"] [  str "Photo Groove"]
+        br []
+        div [Id "thumbnails" ] (model.photos |> List.map (viewThumbnail model.selectedUrl)) 
+        img [ClassName "large"
+             Src (urlPrefix + "large/" + model.selectedUrl)]   
+        br []
+        ]
+
+
+// App
+Program.mkSimple init update view
+|> Program.withConsoleTrace
+|> Program.withReact "elmish-app"
+|> Program.run

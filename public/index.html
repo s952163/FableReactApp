@@ -1,15 +1,25 @@
-<!doctype html>
+﻿<!doctype html>
 <html>
 <head>
-  <title>Simple Fable App</title>
-  <meta http-equiv='Content-Type' content='text/html; charset=utf-8'>
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <link rel="shortcut icon" type="image/png" href="favicon-32x32.png" sizes="32x32" />
-  <link rel="shortcut icon" type="image/png" href="favicon-16x16.png" sizes="16x16" />
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+  <title>Photo Groove2</title>
+
+<style>
+  body { background-color: rgb(44,44,44); color: white;}
+  img { border: 1px solid white; margin: 5px;}
+    .large { width: 500px; float: right;}
+    .selected { margin: 0; border: 6px solid #60b5cc;}
+    .content { margin: 40px auto; width: 960px;}
+    #thumbnails { width: 440px; float: left}
+  h1 { font-family: Verdana; color: #60b5cc;}
+</style>
 </head>
-<body>
-  <h1>Using HTML5 Canvas</h1>
-  <canvas align="center" id="canvas" width="1000" height="800"></canvas>
-  <script src="bundle.js"></script>
+
+<body class="app-container">
+    <div id="elmish-app" class="elmish-app"></div>
+    <script src="bundle.js"></script>
+    <script src="manifest.js"></script>
+    <script src="vendor.js"></script>
+    <script src="main.js"></script>
 </body>
 </html>

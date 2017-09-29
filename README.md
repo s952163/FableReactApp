@@ -1,3 +1,21 @@
+# Super simplied template for Fable Elmish React
+
+Updates the paket files with react dependencies.
+
+After cloning
+
+* paket restore
+* yarn install -g react
+* yarn install -g react-dom
+* yarn install
+* dotnet restore
+* cd src
+* dotnet fable yarn-start
+
+The original index.html (index1.html) and App.fs (App1.fs) files are replaced with a React sample from the ReactSampl folder.
+
+Based on the famous:
+
 # Fable Simple Template
 
 This template can be used to generate a simple web app with [Fable](http://fable.io/).
