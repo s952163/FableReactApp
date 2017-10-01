@@ -8,7 +8,8 @@ open System
 
 open Fable.Core.JsInterop
 open Fable.Helpers.React.Props
-
+open Fable.PowerPack
+open Fable.PowerPack.Fetch
 open Elmish.React
 
 //module R = Fable.Helpers.React
@@ -50,6 +51,7 @@ let album = {
     }
 
 let urlPrefix = "http://elm-in-action.com/"
+let photoUrl = "http://elm-in-action.com/photos/list"
 
 let rnd = System.Random()
 let randomPhotoPicker() =
@@ -64,6 +66,12 @@ let getPhotoUrl (x:int) =
 
 let init() : Model * Cmd<Msg>  = album, []
 
+// FETCH TEST
+fetch photoUrl []
+|> Promise.bind (fun res -> res.text())
+|> Promise.map (fun txt ->
+    Browser.console.log txt
+) |> ignore
 
 // UPDATE
 let update (msg:Msg) (model:Model): (Model * Cmd<Msg>) =
