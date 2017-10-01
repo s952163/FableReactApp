@@ -56,6 +56,12 @@ let randomPhotoPicker() =
     let x = photoAlbum.Length
     rnd.Next(x)
 
+let getPhotoUrl (x:int) =
+    let photo = List.tryItem x photoAlbum
+    match photo with 
+    | Some x -> x.url
+    | None -> ""
+
 let init() : Model * Cmd<Msg>  = album, []
 
 
@@ -65,7 +71,7 @@ let update (msg:Msg) (model:Model): (Model * Cmd<Msg>) =
   | (SelectedUrl x) -> {model with selectedUrl = x}, [] 
   | RandomUrl    -> model, SelectByIndex (randomPhotoPicker()) |> Cmd.ofMsg
   | (SetSize x) -> {model with chosenSize = x}, [] 
-  | (SelectByIndex x) -> {model with selectedUrl = photoAlbum.[x].url }, []
+  | (SelectByIndex x) -> {model with selectedUrl = getPhotoUrl x }, []
   //| _ -> model
 
 // VIEW (rendered with React)
