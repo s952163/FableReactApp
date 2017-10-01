@@ -19,14 +19,23 @@ type Photo = {
     url: string
     }
 
+type ThumbnailSize =
+    | Small
+    | Medium
+    | Large
+
 type Album = {
     photos : Photo list
     selectedUrl : string
+    chosenSize : ThumbnailSize
     }
 
 type Model = Album
     
 type Msg = | SelectedUrl of string
+           | RandomUrl
+           | SetSize of ThumbnailSize
+           | SelectByIndex of int
 
 let photoAlbum = [
          {url="1.jpeg"}
@@ -37,22 +46,32 @@ let photoAlbum = [
 let album = {
     photos = photoAlbum
     selectedUrl = "1.jpeg"
+    chosenSize = Medium
     }
 
 let urlPrefix = "http://elm-in-action.com/"
 
-let init() : Model = album
+let rnd = System.Random()
+let randomPhotoPicker() =
+    let x = photoAlbum.Length
+    rnd.Next(x)
+
+let init() : Model * Cmd<Msg>  = album, []
 
 
 // UPDATE
-let update (msg:Msg) (model:Model) =
+let update (msg:Msg) (model:Model): (Model * Cmd<Msg>) =
   match msg with 
-  | (SelectedUrl x) -> {model with selectedUrl = x}    
+  | (SelectedUrl x) -> {model with selectedUrl = x}, [] 
+  | RandomUrl    -> model, SelectByIndex (randomPhotoPicker()) |> Cmd.ofMsg
+  | (SetSize x) -> {model with chosenSize = x}, [] 
+  | (SelectByIndex x) -> {model with selectedUrl = photoAlbum.[x].url }, []
   //| _ -> model
 
 // VIEW (rendered with React)
 let view model dispatch =
  
+        
   let viewThumbnail selectedUrl thumbnail = 
         
         img [ Src (urlPrefix + thumbnail.url)
@@ -60,11 +79,28 @@ let view model dispatch =
               OnClick (fun _ -> dispatch (SelectedUrl thumbnail.url))
         ]
 
+
+  let sizeToString (size: ThumbnailSize) =
+      match size with
+      | Small -> "small"
+      | Medium -> "med"
+      | Large -> "large"
+
+  let viewSizeChooser (size : ThumbnailSize) =
+      label [OnClick (fun _ -> dispatch (SetSize size))] 
+            [ input [Type "radio"; Name "size"] 
+              str (sizeToString size)
+                  ]
+
   div [] [
         br [] 
         h1 [ClassName "content"] [  str "Photo Groove"]
-        br []
-        div [Id "thumbnails" ] (model.photos |> List.map (viewThumbnail model.selectedUrl)) 
+        button [ClassName "button"
+                Id "button2"
+                OnClick (fun _ -> dispatch  RandomUrl )] [str "Surprise Me!"]
+        h3 [] [ str "Thumbnail Size:" ]
+        div [Id "choose-size"] ([Small; Medium; Large] |> List.map viewSizeChooser) 
+        div [Id "thumbnails"; ClassName (sizeToString model.chosenSize) ] (model.photos |> List.map (viewThumbnail model.selectedUrl)) 
         img [ClassName "large"
              Src (urlPrefix + "large/" + model.selectedUrl)]   
         br []
@@ -72,7 +108,7 @@ let view model dispatch =
 
 
 // App
-Program.mkSimple init update view
+Program.mkProgram init update view
 |> Program.withConsoleTrace
 |> Program.withReact "elmish-app"
 |> Program.run
