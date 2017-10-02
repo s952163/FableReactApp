@@ -27,7 +27,7 @@ type ThumbnailSize =
 
 type Album = {
     photos : Photo list
-    selectedUrl : string
+    selectedUrl : string option
     chosenSize : ThumbnailSize
     }
 
@@ -37,6 +37,8 @@ type Msg = | SelectedUrl of string
            | RandomUrl
            | SetSize of ThumbnailSize
            | SelectByIndex of int
+           | LoadPhotos of Photo List
+           | FailureToLoad
 
 let photoAlbum = [
          {url="1.jpeg"}
@@ -45,8 +47,8 @@ let photoAlbum = [
          ]
 
 let album = {
-    photos = photoAlbum
-    selectedUrl = "1.jpeg"
+    photos = []
+    selectedUrl = None
     chosenSize = Medium
     }
 
@@ -54,45 +56,48 @@ let urlPrefix = "http://elm-in-action.com/"
 let photoUrl = "http://elm-in-action.com/photos/list"
 
 let rnd = System.Random()
-let randomPhotoPicker() =
-    let x = photoAlbum.Length
+let randomPhotoPicker (model: Album) =
+    let x = model.photos.Length
     rnd.Next(x)
 
-let getPhotoUrl (x:int) =
-    let photo = List.tryItem x photoAlbum
-    match photo with 
-    | Some x -> x.url
-    | None -> ""
-
-let init() : Model * Cmd<Msg>  = album, []
+let getPhotoUrl model (x:int) =
+    let photo = List.tryItem x model.photos
+    photo |> Option.map (fun x -> x.url)
 
 // FETCH TEST
-fetch photoUrl []
-|> Promise.bind (fun res -> res.text())
-|> Promise.map (fun txt ->
-    Browser.console.log txt
-) |> ignore
+let loadPhotos() =
+    fetch photoUrl []
+    |> Promise.bind (fun res -> res.text())
+    |> Promise.map (fun x -> x.Split(','))
+    |> (Array.map >> Promise.map) (fun x -> {url = x})
+    |> Promise.map List.ofArray
+  
+let init() : Model * Cmd<Msg>  = 
+    let photos = loadPhotos()
+    let cmd = Cmd.ofPromise id photos LoadPhotos (fun errorResult -> FailureToLoad)
+    album, cmd
+
 
 // UPDATE
 let update (msg:Msg) (model:Model): (Model * Cmd<Msg>) =
   match msg with 
-  | (SelectedUrl x) -> {model with selectedUrl = x}, [] 
-  | RandomUrl    -> model, SelectByIndex (randomPhotoPicker()) |> Cmd.ofMsg
+  | (SelectedUrl x) -> {model with selectedUrl = Some x}, [] 
+  | RandomUrl    -> model, SelectByIndex (randomPhotoPicker model) |> Cmd.ofMsg
   | (SetSize x) -> {model with chosenSize = x}, [] 
-  | (SelectByIndex x) -> {model with selectedUrl = getPhotoUrl x }, []
+  | (SelectByIndex x) -> {model with selectedUrl = getPhotoUrl model x }, []
+  | (LoadPhotos x) -> {model with photos = x}, []
+  | FailureToLoad -> failwith "oops, couldn't load photos from url"
   //| _ -> model
 
 // VIEW (rendered with React)
 let view model dispatch =
  
-        
-  let viewThumbnail selectedUrl thumbnail = 
+  let viewThumbnail (selectedUrl: string option) thumbnail = 
         
         img [ Src (urlPrefix + thumbnail.url)
-              classList  ["selected", selectedUrl = thumbnail.url] 
+              classList  ["selected", selectedUrl = Some thumbnail.url] 
               OnClick (fun _ -> dispatch (SelectedUrl thumbnail.url))
         ]
-
 
   let sizeToString (size: ThumbnailSize) =
       match size with
@@ -105,6 +110,11 @@ let view model dispatch =
             [ input [Type "radio"; Name "size"] 
               str (sizeToString size)
                   ]
+  let viewLarge (url: string option) =
+    match url with 
+    | Some url -> img [ClassName "large"
+                       Src (urlPrefix + "large/" + url)]
+    | None -> str ""
 
   div [] [
         br [] 
@@ -115,8 +125,7 @@ let view model dispatch =
         h3 [] [ str "Thumbnail Size:" ]
         div [Id "choose-size"] ([Small; Medium; Large] |> List.map viewSizeChooser) 
         div [Id "thumbnails"; ClassName (sizeToString model.chosenSize) ] (model.photos |> List.map (viewThumbnail model.selectedUrl)) 
-        img [ClassName "large"
-             Src (urlPrefix + "large/" + model.selectedUrl)]   
+        viewLarge model.selectedUrl    
         br []
         ]
 
