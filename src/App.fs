@@ -15,7 +15,7 @@ open Elmish.React
 //module R = Fable.Helpers.React
 open Fable.Helpers.React
 
-// MODEL
+//                                          <==MODEL==>
 type Photo = {
     url: string
     }
@@ -29,6 +29,7 @@ type Album = {
     photos : Photo list
     selectedUrl : string option
     chosenSize : ThumbnailSize
+    loadingError: string option
     }
 
 type Model = Album
@@ -40,60 +41,53 @@ type Msg = | SelectedUrl of string
            | LoadPhotos of Photo List
            | FailureToLoad
 
-let photoAlbum = [
-         {url="1.jpeg"}
-         {url= "2.jpeg"}
-         {url = "3.jpeg"}
-         ]
-
 let album = {
     photos = []
     selectedUrl = None
     chosenSize = Medium
+    loadingError = None
     }
 
 let urlPrefix = "http://elm-in-action.com/"
 let photoUrl = "http://elm-in-action.com/photos/list"
 
+//                                      <==UPDATE==>
 let rnd = System.Random()
 let randomPhotoPicker (model: Album) =
     let x = model.photos.Length
     rnd.Next(x)
 
 let getPhotoUrl model (x:int) =
-    let photo = List.tryItem x model.photos
-    photo |> Option.map (fun x -> x.url)
+    List.tryItem x model.photos
+    |> Option.map (fun x -> x.url)
 
-// FETCH TEST
+
 let loadPhotos() =
     fetch photoUrl []
     |> Promise.bind (fun res -> res.text())
     |> Promise.map (fun x -> x.Split(','))
     |> (Array.map >> Promise.map) (fun x -> {url = x})
     |> Promise.map List.ofArray
-  
+
 let init() : Model * Cmd<Msg>  = 
     let photos = loadPhotos()
     let cmd = Cmd.ofPromise id photos LoadPhotos (fun errorResult -> FailureToLoad)
     album, cmd
 
-
-// UPDATE
 let update (msg:Msg) (model:Model): (Model * Cmd<Msg>) =
   match msg with 
   | (SelectedUrl x) -> {model with selectedUrl = Some x}, [] 
   | RandomUrl    -> model, SelectByIndex (randomPhotoPicker model) |> Cmd.ofMsg
   | (SetSize x) -> {model with chosenSize = x}, [] 
   | (SelectByIndex x) -> {model with selectedUrl = getPhotoUrl model x }, []
-  | (LoadPhotos x) -> {model with photos = x}, []
-  | FailureToLoad -> failwith "oops, couldn't load photos from url"
-  //| _ -> model
+  | (LoadPhotos x) -> {model with photos = x; selectedUrl = Some (List.head(x)).url}, []
+  | FailureToLoad -> {model with loadingError = Some "Error. Try turning it on or off."}, []
+  
 
-// VIEW (rendered with React)
+//                             <==VIEW (rendered with React)==>
 let view model dispatch =
  
   let viewThumbnail (selectedUrl: string option) thumbnail = 
-        
         img [ Src (urlPrefix + thumbnail.url)
               classList  ["selected", selectedUrl = Some thumbnail.url] 
               OnClick (fun _ -> dispatch (SelectedUrl thumbnail.url))
@@ -129,9 +123,18 @@ let view model dispatch =
         br []
         ]
 
+let viewOrError (model:Model) dispatch =
+    match model.loadingError with
+    | Some x -> 
+        div [ClassName "error-message"]
+            [ h1 [] [str "Photo Groove"]
+              p [] [str x]           
+            ]
+    | None ->
+        view model dispatch
 
-// App
-Program.mkProgram init update view
+//                                  <== App ==>
+Program.mkProgram init update viewOrError
 |> Program.withConsoleTrace
 |> Program.withReact "elmish-app"
 |> Program.run
