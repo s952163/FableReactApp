@@ -15,9 +15,12 @@ open Elmish.React
 //module R = Fable.Helpers.React
 open Fable.Helpers.React
 
-//                                          <==MODEL==>
+//                                         <==MODEL==>
+[<CLIMutable>]
 type Photo = {
     url: string
+    size: int
+    title: string
     }
 
 type ThumbnailSize =
@@ -41,6 +44,9 @@ type Msg = | SelectedUrl of string
            | LoadPhotos of Photo List
            | FailureToLoad
 
+
+
+//                                      <==UPDATE (aka STATE)==>
 let album = {
     photos = []
     selectedUrl = None
@@ -50,8 +56,8 @@ let album = {
 
 let urlPrefix = "http://elm-in-action.com/"
 let photoUrl = "http://elm-in-action.com/photos/list"
+let photoUrlJSON = "http://elm-in-action.com/photos/list.json"
 
-//                                      <==UPDATE==>
 let rnd = System.Random()
 let randomPhotoPicker (model: Album) =
     let x = model.photos.Length
@@ -62,15 +68,15 @@ let getPhotoUrl model (x:int) =
     |> Option.map (fun x -> x.url)
 
 
-let loadPhotos() =
-    fetch photoUrl []
-    |> Promise.bind (fun res -> res.text())
-    |> Promise.map (fun x -> x.Split(','))
-    |> (Array.map >> Promise.map) (fun x -> {url = x})
-    |> Promise.map List.ofArray
+let loadPhotosJSON() =
+    promise {
+        let! response = fetchAs<Photo list> @"http://elm-in-action.com/photos/list.json" []
+        return response    
+    } 
+
 
 let init() : Model * Cmd<Msg>  = 
-    let photos = loadPhotos()
+    let photos = loadPhotosJSON()
     let cmd = Cmd.ofPromise id photos LoadPhotos (fun errorResult -> FailureToLoad)
     album, cmd
 
@@ -81,7 +87,7 @@ let update (msg:Msg) (model:Model): (Model * Cmd<Msg>) =
   | (SetSize x) -> {model with chosenSize = x}, [] 
   | (SelectByIndex x) -> {model with selectedUrl = getPhotoUrl model x }, []
   | (LoadPhotos x) -> {model with photos = x; selectedUrl = Some (List.head(x)).url}, []
-  | FailureToLoad -> {model with loadingError = Some "Error. Try turning it on or off."}, []
+  | FailureToLoad -> {model with loadingError = Some "Error. Try turning it off and on."}, []
   
 
 //                             <==VIEW (rendered with React)==>
@@ -89,6 +95,7 @@ let view model dispatch =
  
   let viewThumbnail (selectedUrl: string option) thumbnail = 
         img [ Src (urlPrefix + thumbnail.url)
+              Title (thumbnail.title + " [" + (string thumbnail.size) + " KB]")
               classList  ["selected", selectedUrl = Some thumbnail.url] 
               OnClick (fun _ -> dispatch (SelectedUrl thumbnail.url))
         ]
