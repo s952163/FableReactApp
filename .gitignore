@@ -197,3 +197,4 @@ project.lock.json
 
 # vscode
 .vscode/
+.vscode/temp.sql
