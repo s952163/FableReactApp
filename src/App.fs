@@ -127,17 +127,14 @@ let view model dispatch =
         button [ClassName "button"
                 Id "button2"
                 OnClick (fun _ -> dispatch  RandomUrl )] [str "Surprise Me!"]
+        div [ ClassName "filters"] [
+               Slider.slider [] []
+        ]        
         h3 [] [ str "Thumbnail Size:" ]
         div [Id "choose-size"] ([Small; Medium; Large] |> List.map viewSizeChooser) 
         div [Id "thumbnails"; ClassName (sizeToString model.chosenSize) ] (model.photos |> List.map (viewThumbnail model.selectedUrl)) 
         viewLarge model.selectedUrl    
         br []
-        br []
-        Slider.slider [] []
-        br []
-        Slider.slider [] []
-        br []
-        Slider.slider [] []
         ]
   
 
