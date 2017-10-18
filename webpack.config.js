@@ -2,6 +2,9 @@ var path = require("path");
 var webpack = require("webpack");
 var fableUtils = require("fable-utils");
 
+const autoprefixer = require('autoprefixer'); //
+var ExtractTextPlugin = require('extract-text-webpack-plugin'); //
+
 function resolve(filePath) {
   return path.join(__dirname, filePath)
 }
@@ -47,6 +50,14 @@ module.exports = {
           loader: 'babel-loader',
           options: babelOptions
         },
+      },
+      {
+        test: /\.sass$/,
+        use: [
+          "style-loader",
+          "css-loader",
+          "sass-loader"
+        ]
       }
     ]
   }

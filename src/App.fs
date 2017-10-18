@@ -1,20 +1,23 @@
 module App
 
 
+
+
 open Fable.Core
 open Fable.Import
 open Elmish
 open System
 
 open Fable.Core.JsInterop
+open Fable.Helpers.ReactToolbox
+open Fable.Helpers.ReactToolbox.Props
+module RT = Fable.Helpers.ReactToolbox
 open Fable.Helpers.React.Props
 open Fable.PowerPack
 open Fable.PowerPack.Fetch
 open Elmish.React
 
-//module R = Fable.Helpers.React
 open Fable.Helpers.React
-
 //                                         <==MODEL==>
 [<CLIMutable>]
 type Photo = {
@@ -70,7 +73,7 @@ let getPhotoUrl model (x:int) =
 
 let loadPhotosJSON() =
     promise {
-        let! response = fetchAs<Photo list> @"http://elm-in-action.com/photos/list.json" []
+        let! response = fetchAs<Photo list> photoUrlJSON  []
         return response    
     } 
 
@@ -92,7 +95,7 @@ let update (msg:Msg) (model:Model): (Model * Cmd<Msg>) =
 
 //                             <==VIEW (rendered with React)==>
 let view model dispatch =
- 
+
   let viewThumbnail (selectedUrl: string option) thumbnail = 
         img [ Src (urlPrefix + thumbnail.url)
               Title (thumbnail.title + " [" + (string thumbnail.size) + " KB]")
@@ -126,6 +129,7 @@ let view model dispatch =
         h3 [] [ str "Thumbnail Size:" ]
         div [Id "choose-size"] ([Small; Medium; Large] |> List.map viewSizeChooser) 
         div [Id "thumbnails"; ClassName (sizeToString model.chosenSize) ] (model.photos |> List.map (viewThumbnail model.selectedUrl)) 
+        //slider [] []
         viewLarge model.selectedUrl    
         br []
         ]
