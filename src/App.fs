@@ -16,9 +16,9 @@ open Elmish.React
 
 open Fable.Helpers.React
 
-//open Fulma
-//open Fulma.Elmish
-//open Fulma.Extensions
+open Fulma
+open Fulma.Elmish
+open Fulma.Extensions
 
 //                                         <==MODEL==>
 [<CLIMutable>]
