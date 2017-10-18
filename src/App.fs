@@ -15,6 +15,10 @@ open Elmish.React
 //module R = Fable.Helpers.React
 open Fable.Helpers.React
 
+open Fulma
+open Fulma.Elmish
+open Fulma.Extensions
+
 //                                         <==MODEL==>
 [<CLIMutable>]
 type Photo = {
@@ -128,7 +132,15 @@ let view model dispatch =
         div [Id "thumbnails"; ClassName (sizeToString model.chosenSize) ] (model.photos |> List.map (viewThumbnail model.selectedUrl)) 
         viewLarge model.selectedUrl    
         br []
+        br []
+        Slider.slider [] []
+        br []
+        Slider.slider [] []
+        br []
+        Slider.slider [] []
         ]
+  
+
 
 let viewOrError (model:Model) dispatch =
     match model.loadingError with

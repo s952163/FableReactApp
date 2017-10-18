@@ -8,3 +8,6 @@ nuget Fable.Import.Browser
 nuget Fable.Elmish.React
 nuget Fable.Elmish.Browser
 nuget Fable.Elmish.Debugger
+nuget Fulma
+nuget Fulma.Extensions
+nuget Fulma.Elmish

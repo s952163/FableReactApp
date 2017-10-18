@@ -4,3 +4,6 @@ Fable.Core
 Fable.Elmish.React
 Fable.Elmish.Browser
 Fable.Elmish.Debugger
+Fulma
+Fulma.Extensions
+Fulma.Elmish
