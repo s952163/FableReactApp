@@ -1,8 +1,5 @@
 module App
 
-
-
-
 open Fable.Core
 open Fable.Import
 open Elmish
@@ -80,10 +77,10 @@ let loadPhotosJSON() =
 
 let init() : Model * Cmd<Msg>  = 
     let photos = loadPhotosJSON()
-    let cmd = Cmd.ofPromise id photos LoadPhotos (fun errorResult -> FailureToLoad)
+    let cmd = Cmd.ofPromise id photos LoadPhotos (fun _ -> FailureToLoad)
     album, cmd
 
-let update (msg:Msg) (model:Model): (Model * Cmd<Msg>) =
+let update (msg: Msg) (model: Model) : (Model * Cmd<Msg>) =
   match msg with 
   | (SelectedUrl x) -> {model with selectedUrl = Some x}, [] 
   | RandomUrl    -> model, SelectByIndex (randomPhotoPicker model) |> Cmd.ofMsg
