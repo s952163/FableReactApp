@@ -37,6 +37,7 @@ type Album = {
     selectedUrl : string option
     chosenSize : ThumbnailSize
     loadingError: string option
+    value: int
     }
 
 type Model = Album
@@ -47,6 +48,7 @@ type Msg = | SelectedUrl of string
            | SelectByIndex of int
            | LoadPhotos of Photo List
            | FailureToLoad
+           | Change of int
 
 
 
@@ -56,6 +58,7 @@ let album = {
     selectedUrl = None
     chosenSize = Medium
     loadingError = None
+    value = 50
     }
 
 let urlPrefix = "http://elm-in-action.com/"
@@ -92,7 +95,7 @@ let update (msg:Msg) (model:Model): (Model * Cmd<Msg>) =
   | (SelectByIndex x) -> {model with selectedUrl = getPhotoUrl model x }, []
   | (LoadPhotos x) -> {model with photos = x; selectedUrl = Some (List.head(x)).url}, []
   | FailureToLoad -> {model with loadingError = Some "Error. Try turning it off and on."}, []
-  
+  | Change x -> { model with value = x}, []
 
 //                             <==VIEW (rendered with React)==>
 let view model dispatch =
@@ -128,8 +131,10 @@ let view model dispatch =
                 Id "button2"
                 OnClick (fun _ -> dispatch  RandomUrl )] [str "Surprise Me!"]
         div [ ClassName "filters"] [
-               Slider.slider [] []
-        ]        
+               Slider.slider [Slider.isSmall; Slider.isCircle;Slider.defaultValue(50.); 
+                              Slider.onChange (fun x -> dispatch (Change (unbox<int> x.currentTarget?value)))  ] []
+               div [] [str (string model.value)] 
+        ]       
         h3 [] [ str "Thumbnail Size:" ]
         div [Id "choose-size"] ([Small; Medium; Large] |> List.map viewSizeChooser) 
         div [Id "thumbnails"; ClassName (sizeToString model.chosenSize) ] (model.photos |> List.map (viewThumbnail model.selectedUrl)) 
