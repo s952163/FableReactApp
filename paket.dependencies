@@ -9,3 +9,6 @@ nuget Fable.Elmish.React
 nuget Fable.ReactToolbox
 nuget Fable.Elmish.Browser
 nuget Fable.Elmish.Debugger
+nuget Fulma
+nuget Fulma.Elmish
+nuget Fulma.extensions

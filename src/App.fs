@@ -15,6 +15,11 @@ open Fable.PowerPack.Fetch
 open Elmish.React
 
 open Fable.Helpers.React
+
+open Fulma
+open Fulma.Elmish
+open Fulma.Extensions
+
 //                                         <==MODEL==>
 [<CLIMutable>]
 type Photo = {
@@ -126,7 +131,7 @@ let view model dispatch =
         h3 [] [ str "Thumbnail Size:" ]
         div [Id "choose-size"] ([Small; Medium; Large] |> List.map viewSizeChooser) 
         div [Id "thumbnails"; ClassName (sizeToString model.chosenSize) ] (model.photos |> List.map (viewThumbnail model.selectedUrl)) 
-        //slider [] []
+        //Calendar.calendar [] [] // React-tools slide
         viewLarge model.selectedUrl    
         br []
         ]
