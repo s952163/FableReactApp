@@ -1,5 +1,22 @@
 # Super simplied template for Fable Elmish React
 
+## To boostrap a Fable Elmish React App:  
+
+* Prerequisites:
+    ** .NET Core SDK 2.0
+    ** node.js
+    ** npm or yarn  
+
+* Install the fable-elmish-reach template for .net core: `dotnet new -i Fable.Template.Elmish.React`  
+* Initalize  a new project: `dotnet new fable-elmish-react -n FableElmishReact`
+* Install JS dependencies via yarn: `cd FableElmishReact && yarn install`
+* Install .NET dependencies via dotnet restore: `dotnet restore && cd src && dotnet restore`
+* Run the webpack development server: `dotnet fable yarn-start`  
+
+This will create a sample app. 
+
+## How to add react to fable-elmish to a bare-bones fable template
+
 Updates the paket files with react dependencies.
 
 After cloning
