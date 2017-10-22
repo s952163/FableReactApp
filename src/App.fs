@@ -118,6 +118,7 @@ let view model dispatch =
             [ input [Type "radio"; Name "size"] 
               str (sizeToString size)
                   ]
+                  
   let viewLarge (url: string option) =
     match url with 
     | Some url -> img [ClassName "large"
@@ -133,7 +134,7 @@ let view model dispatch =
         div [ ClassName "filters"] [
                Slider.slider [Slider.defaultValue(50.) 
                               Slider.onChange (fun x -> dispatch <| Change !!x.currentTarget?value)  
-                              ] []
+                              ] [] 
                div [] [str (string model.value)] 
         ]       
         h3 [] [ str "Thumbnail Size:" ]
