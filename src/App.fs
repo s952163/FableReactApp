@@ -131,8 +131,9 @@ let view model dispatch =
                 Id "button2"
                 OnClick (fun _ -> dispatch  RandomUrl )] [str "Surprise Me!"]
         div [ ClassName "filters"] [
-               Slider.slider [Slider.isSmall; Slider.isCircle;Slider.defaultValue(50.); 
-                              Slider.onChange (fun x -> dispatch (Change (unbox<int> x.currentTarget?value)))  ] []
+               Slider.slider [Slider.defaultValue(50.) 
+                              Slider.onChange (fun x -> dispatch <| Change !!x.currentTarget?value)  
+                              ] []
                div [] [str (string model.value)] 
         ]       
         h3 [] [ str "Thumbnail Size:" ]
