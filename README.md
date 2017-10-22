@@ -1,6 +1,8 @@
 # **Super simplied template for Fable Elmish React**
 
-This [FableReactApp](https://github.com/s952163/FableReactApp) repo demonstrates the Elm architecture from [Elm in Action](https://www.manning.com/books/elm-in-action) in F# with [Fable](http://fable.io/) [Elmish](https://fable-elmish.github.io/).
+This [FableReactApp repo](https://github.com/s952163/FableReactApp) demonstrates the Elm architecture from 
+[Elm in Action](https://www.manning.com/books/elm-in-action) in F# with [Fable](http://fable.io/) [Elmish](https://fable-elmish.github.io/).  
+More on the Elm architecture in the [Elm Guide](https://guide.elm-lang.org/architecture/).   
 
 * Prerequisites:  
     * .NET Core SDK 2.0  
@@ -32,14 +34,15 @@ This will create a sample app on `localhost:8080`.
 Updates the paket files with react dependencies.
 
 
-* See below the Fable Simple Template
-* paket restore
-* yarn install -g react
-* yarn install -g react-dom
-* yarn install
-* dotnet restore
-* cd src
-* dotnet fable yarn-start
+* See below the Fable Simple Template  
+* `paket restore`  
+* `yarn global add react`  
+* `yarn global add react-dom`  
+* `yarn install`  
+* `dotnet restore`  
+* `cd src`  
+* `dotnet fable yarn-start`  
+
 
 The original `index.html` (index1.html) and `App.fs` (App1.fs) files are replaced with a React sample from the ReactSample folder.
 
@@ -79,7 +82,7 @@ In a terminal, run `dotnet new fable` to create a project in the current directo
 > In the commands below, yarn is the tool of choice. If you want to use npm, just replace `yarn` by `npm` in the commands.
 
 * Install JS dependencies: `yarn install`
-* **Move to `src` folder**: `cd src`
+* Move to `src` folder: `cd src`
 * Install F# dependencies: `dotnet restore`
 * Start Fable daemon and [Webpack](https://webpack.js.org/) dev server: `dotnet fable yarn-start`
 * In your browser, open: http://localhost:8080/
