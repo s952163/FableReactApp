@@ -1,11 +1,22 @@
-# Super simplied template for Fable Elmish React
+# **Super simplied template for Fable Elmish React**
 
-## To boostrap a Fable Elmish React App:  
+This [FableReactApp](https://github.com/s952163/FableReactApp) repo demonstrates the Elm architecture from [Elm in Action](https://www.manning.com/books/elm-in-action) in F# with [Fable](http://fable.io/) [Elmish](https://fable-elmish.github.io/).
 
-* Prerequisites:
-    ** .NET Core SDK 2.0
-    ** node.js
-    ** npm or yarn  
+* Prerequisites:  
+    * .NET Core SDK 2.0  
+    * node.js  
+    * npm or yarn    
+
+To clone this repo: 
+
+* ` git clone git@github.com:s952163/FableReactApp.git`
+* `cd FableReactApp`
+* `yarn install`
+* `cd src`
+* `dotnet restore`
+* `dotnet fable yarn-start`
+
+## To boostrap a Fable Elmish React App from scratch:  
 
 * Install the fable-elmish-reach template for .net core: `dotnet new -i Fable.Template.Elmish.React`  
 * Initalize  a new project: `dotnet new fable-elmish-react -n FableElmishReact`
@@ -13,14 +24,15 @@
 * Install .NET dependencies via dotnet restore: `dotnet restore && cd src && dotnet restore`
 * Run the webpack development server: `dotnet fable yarn-start`  
 
-This will create a sample app. 
+This will create a sample app on `localhost:8080`.
+
 
 ## How to add react to fable-elmish to a bare-bones fable template
 
 Updates the paket files with react dependencies.
 
-After cloning
 
+* See below the Fable Simple Template
 * paket restore
 * yarn install -g react
 * yarn install -g react-dom
@@ -31,7 +43,7 @@ After cloning
 
 The original `index.html` (index1.html) and `App.fs` (App1.fs) files are replaced with a React sample from the ReactSample folder.
 
-Based on the famous:
+Based on the famous (below is the original Readme):
 
 # Fable Simple Template
 
