@@ -19,6 +19,7 @@ open Fulma
 open Fulma.Elmish
 open Fulma.Extensions
 
+
 //                                         <==MODEL==>
 [<CLIMutable>]
 type Photo = {
@@ -118,7 +119,7 @@ let view model dispatch =
             [ input [Type "radio"; Name "size"] 
               str (sizeToString size)
                   ]
-                  
+
   let viewLarge (url: string option) =
     match url with 
     | Some url -> img [ClassName "large"
